@@ -12,6 +12,8 @@ var express = require('express'),
 
 // generate a new express app and call it 'app'
 var app = express();
+var db = require('./models');
+
 
 // serve static files in public
 app.use(express.static('public'));
@@ -70,8 +72,10 @@ app.get('/', function (req, res) {
 // get all books
 app.get('/api/books', function (req, res) {
   // send all books as JSON response
-  console.log('books index');
-  res.json(books);
+  db.Book.find(function(err, books){
+    if (err) { return console.log("index error: " + err); }
+    res.json(books);
+  });
 });
 
 // get one book
@@ -79,7 +83,7 @@ app.get('/api/books/:id', function (req, res) {
   // find one book by its id
   console.log('books show', req.params);
   for(var i=0; i < books.length; i++) {
-    if (books[i]._id === req.params.id) {
+    if (books[i]._id == req.params.id) {
       res.json(books[i]);
       break; // we found the right book, we can stop searching
     }
